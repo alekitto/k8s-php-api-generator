@@ -67,7 +67,7 @@ class ApiVersionsCommand extends Command
         );
     }
 
-    public function execute(InputInterface $input, OutputInterface $output)
+    public function execute(InputInterface $input, OutputInterface $output): int
     {
         $kubernetesTags = $this->githubClient->getTags(self::GITHUB_OWNER, self::GITHUB_REPO);
         $minVersion = $input->getOption('min-version');

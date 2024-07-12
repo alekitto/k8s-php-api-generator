@@ -45,7 +45,7 @@ class ModelConstructorGenerator
         Metadata $metadata,
         CodeOptions $options
     ): void {
-        list('metadata' => $metadataProp, 'spec' => $specProp, ) = $this->getCoreProps($properties);
+        ['metadata' => $metadataProp, 'spec' => $specProp] = $this->getCoreProps($properties);
         $requiredProps = $this->getRequiredProps($properties);
 
         if (!empty($requiredProps) || ($specProp || $metadataProp)) {
@@ -131,6 +131,26 @@ class ModelConstructorGenerator
                 $param->setType($modelProp->getPhpReturnType());
                 $docblockParams[$param->getName()] = $modelProp;
                 $specParams [] = '$' . $modelProp->getPhpPropertyName();
+            }
+
+            // TOFIX: Hack
+            if ($class->getName() === 'ResourceClaimTemplate') {
+                $specParams = ['$name', '$resourceClassName'];
+                unset($docblockParams['spec']);
+
+                $constructor->setParameters([]);
+                $constructor->setComment('');
+
+                $param = $constructor->addParameter('name');
+                $param->setType('string');
+                $param->setNullable(false);
+
+                $param = $constructor->addParameter('resourceClassName');
+                $param->setType('string');
+                $param->setNullable(false);
+
+                $constructor->addComment('@param string $name');
+                $constructor->addComment('@param string $resourceClassName');
             }
 
             if (!empty($specParams)) {

@@ -162,8 +162,8 @@ class GenerateCommand extends Command
             self::SWAGGER_SPEC_PATH
         );
 
-        /** @var Swagger $openApi */
         try {
+            /** @var Swagger $openApi */
             $openApi = $this->serializer->deserialize($gitContent->getContent(), Swagger::class);
         } catch (Throwable $exception) {
             $output->writeln('<error>Unable to parse the OpenAPI specification:</error>');
