@@ -13,13 +13,13 @@ declare(strict_types=1);
 
 namespace K8s\ApiGenerator\Code\Formatter;
 
-class PhpPropertyNameFormatter
+readonly class PhpPropertyNameFormatter
 {
     public function format(string $propertyName): string
     {
         $propertyName = str_replace('$', '', $propertyName);
 
-        if (strpos($propertyName, '-') !== false) {
+        if (str_contains($propertyName, '-')) {
             $propertyName = ucwords($propertyName, '-');
             $propertyName = lcfirst($propertyName);
             $propertyName = str_replace('-', '', $propertyName);

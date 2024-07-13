@@ -16,7 +16,7 @@ namespace K8s\ApiGenerator\Code;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Process\Process;
 
-class CodeCleaner
+readonly class CodeCleaner
 {
     use CodeDirectoriesTrait;
 

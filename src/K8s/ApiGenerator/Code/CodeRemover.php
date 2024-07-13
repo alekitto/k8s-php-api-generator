@@ -17,7 +17,7 @@ use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class CodeRemover
+readonly class CodeRemover
 {
     use CodeDirectoriesTrait;
 
@@ -25,7 +25,7 @@ class CodeRemover
     {
         $directories = $this->getCodeDirectories($options);
 
-        foreach ($directories as $name => $dirPath) {
+        foreach ($directories as $dirPath) {
             if (!file_exists($dirPath)) {
                 continue;
             }

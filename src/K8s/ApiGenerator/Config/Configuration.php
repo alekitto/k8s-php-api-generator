@@ -19,11 +19,8 @@ class Configuration
 
     public const KEY_GENERATOR_VERSION = 'generator-version';
 
-    private array $data;
-
-    public function __construct(array $data)
+    public function __construct(private array $data)
     {
-        $this->data = $data;
     }
 
     public function getApiVersion(): string

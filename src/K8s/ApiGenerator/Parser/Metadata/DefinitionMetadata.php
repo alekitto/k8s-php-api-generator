@@ -17,7 +17,7 @@ use K8s\ApiGenerator\Parser\Formatter\GoPackageName;
 use Swagger\Annotations\Definition;
 use Swagger\Annotations\Property;
 
-class DefinitionMetadata
+readonly class DefinitionMetadata
 {
     public const DEFINITION_JSON = '.JSON';
 
@@ -35,14 +35,8 @@ class DefinitionMetadata
 
     public const TYPE_DATETIME = 'DateTime';
 
-    private Definition $definition;
-
-    private GoPackageName $goPackageName;
-
-    public function __construct(GoPackageName $name, Definition $definition)
+    public function __construct(private GoPackageName $goPackageName, private Definition $definition)
     {
-        $this->goPackageName = $name;
-        $this->definition = $definition;
     }
 
     public function getPhpFqcn(): string
@@ -62,7 +56,7 @@ class DefinitionMetadata
     {
         return array_filter(
             $this->getProperties(),
-            fn (PropertyMetadata $propertyMetadata) => $propertyMetadata->isRequired()
+            static fn (PropertyMetadata $propertyMetadata) => $propertyMetadata->isRequired()
         );
     }
 
@@ -83,7 +77,7 @@ class DefinitionMetadata
 
     public function isDeprecated(): bool
     {
-        return strpos($this->getDescription(), 'Deprecated:') !== false;
+        return str_contains($this->getDescription(), 'Deprecated:');
     }
 
     public function required(): array
@@ -99,9 +93,9 @@ class DefinitionMetadata
         return array_map(
             fn (Property $property) => new PropertyMetadata(
                 $property,
-                in_array($property->property, (array)$this->definition->required, true)
+                in_array($property->property, $this->definition->required, true)
             ),
-            (array)$this->definition->properties
+            $this->definition->properties
         );
     }
 
@@ -243,7 +237,7 @@ class DefinitionMetadata
 
     public function isItemList(): bool
     {
-        return substr($this->getClassName(), -strlen('List')) === 'List'
+        return str_ends_with($this->getClassName(), 'List')
             && $this->getProperty('items');
     }
 

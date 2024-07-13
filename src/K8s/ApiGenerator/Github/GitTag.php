@@ -13,13 +13,10 @@ declare(strict_types=1);
 
 namespace K8s\ApiGenerator\Github;
 
-class GitTag
+readonly class GitTag
 {
-    private array $tag;
-
-    public function __construct(array $tag)
+    public function __construct(private array $tag)
     {
-        $this->tag = $tag;
     }
 
     public function getRef(): string
@@ -36,14 +33,14 @@ class GitTag
     {
         $version = strtolower($this->getCommonName());
 
-        return strpos($version, '-rc') === false
-            && strpos($version, '-beta') === false
-            && strpos($version, '-dev') === false
-            && strpos($version, '-alpha') === false;
+        return !str_contains($version, '-rc')
+            && !str_contains($version, '-beta')
+            && !str_contains($version, '-dev')
+            && !str_contains($version, '-alpha');
     }
 
     public function startsWith(string $name): bool
     {
-        return substr($this->getCommonName(), 0, strlen($name)) === $name;
+        return str_starts_with($this->getCommonName(), $name);
     }
 }

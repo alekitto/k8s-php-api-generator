@@ -15,26 +15,14 @@ namespace K8s\ApiGenerator\Code;
 
 class CodeOptions
 {
-    private string $rootNamespace;
-
-    private string $apiVersion;
-
-    private string $srcDir;
-
-    private string $generatorVersion;
-
     private string $annotationsBaseNamespace = 'K8s\\Core\\Annotation';
 
     public function __construct(
-        string $apiVersion,
-        string $generatorVersion,
-        string $rootNamespace,
-        string $srcDir
+        private readonly string $apiVersion,
+        private readonly string $generatorVersion,
+        private readonly string $rootNamespace,
+        private readonly string $srcDir,
     ) {
-        $this->rootNamespace = $rootNamespace;
-        $this->apiVersion = $apiVersion;
-        $this->generatorVersion = $generatorVersion;
-        $this->srcDir = $srcDir;
     }
 
     public function getAnnotationsNamespace(): string

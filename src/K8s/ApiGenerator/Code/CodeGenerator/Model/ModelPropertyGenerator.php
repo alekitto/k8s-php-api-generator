@@ -23,7 +23,7 @@ use K8s\ApiGenerator\Parser\Metadata\PropertyMetadata;
 use Nette\PhpGenerator\ClassType;
 use Nette\PhpGenerator\PhpNamespace;
 
-class ModelPropertyGenerator
+readonly class ModelPropertyGenerator
 {
     use CodeGeneratorTrait;
 
@@ -100,7 +100,9 @@ class ModelPropertyGenerator
     {
         if ($property->getName() === 'kind') {
             return $definition->getKubernetesKind();
-        } elseif ($property->getName() === 'apiVersion') {
+        }
+
+        if ($property->getName() === 'apiVersion') {
             $default = '';
             if ($definition->getKubernetesGroup()) {
                 $default .= $definition->getKubernetesGroup() . '/';

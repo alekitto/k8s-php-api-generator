@@ -23,7 +23,7 @@ use Nette\PhpGenerator\ClassType;
 use Nette\PhpGenerator\Method;
 use Nette\PhpGenerator\PhpNamespace;
 
-class ModelConstructorGenerator
+readonly class ModelConstructorGenerator
 {
     use ModelPropsTrait;
 

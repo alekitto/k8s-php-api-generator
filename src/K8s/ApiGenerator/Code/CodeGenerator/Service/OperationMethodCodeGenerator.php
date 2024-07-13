@@ -24,7 +24,7 @@ use K8s\Core\PatchInterface;
 use Nette\PhpGenerator\ClassType;
 use Nette\PhpGenerator\PhpNamespace;
 
-class OperationMethodCodeGenerator
+readonly class OperationMethodCodeGenerator
 {
     use CodeGeneratorTrait;
     use DocBlockFormatterTrait;

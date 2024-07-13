@@ -23,7 +23,7 @@ use K8s\Core\Collection;
 use Nette\PhpGenerator\ClassType;
 use Nette\PhpGenerator\PhpNamespace;
 
-class AllowedPropsMethodGenerator
+readonly class AllowedPropsMethodGenerator
 {
     use DocBlockFormatterTrait;
 

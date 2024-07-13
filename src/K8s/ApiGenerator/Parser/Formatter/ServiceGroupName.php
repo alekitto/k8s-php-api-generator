@@ -13,30 +13,15 @@ declare(strict_types=1);
 
 namespace K8s\ApiGenerator\Parser\Formatter;
 
-class ServiceGroupName
+readonly class ServiceGroupName
 {
-    private string $groupName;
-
-    private string $groupBaseNamespace;
-
-    private string $groupBaseName;
-
-    private string $version;
-
-    private string $kind;
-
     public function __construct(
-        string $groupName,
-        string $groupBaseNamespace,
-        string $groupBaseName,
-        string $version,
-        string $kind
+        private string $groupName,
+        private string $groupBaseNamespace,
+        private string $groupBaseName,
+        private string $version,
+        private string $kind
     ) {
-        $this->groupName = $groupName;
-        $this->groupBaseNamespace = $groupBaseNamespace;
-        $this->groupBaseName = $groupBaseName;
-        $this->version = $version;
-        $this->kind = $kind;
     }
 
     public function getKind(): string

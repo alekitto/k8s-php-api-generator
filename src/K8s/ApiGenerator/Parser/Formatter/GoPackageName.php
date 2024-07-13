@@ -13,19 +13,10 @@ declare(strict_types=1);
 
 namespace K8s\ApiGenerator\Parser\Formatter;
 
-class GoPackageName
+readonly class GoPackageName
 {
-    private string $phpNamespace;
-
-    private string $phpName;
-
-    private string $goPackageName;
-
-    public function __construct(string $goPackageName, string $phpNamespace, string $phpName)
+    public function __construct(private string $goPackageName, private string $phpNamespace, private string $phpName)
     {
-        $this->goPackageName = $goPackageName;
-        $this->phpNamespace = $phpNamespace;
-        $this->phpName = $phpName;
     }
 
     public function getGoPackageName(): string

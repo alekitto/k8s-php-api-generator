@@ -16,18 +16,12 @@ namespace K8s\ApiGenerator\Code;
 use Nette\PhpGenerator\ClassType;
 use Nette\PhpGenerator\PhpNamespace;
 
-class CodeFile
+readonly class CodeFile
 {
-    private PhpNamespace $phpNamespace;
-
-    private ClassType $classType;
-
     public function __construct(
-        PhpNamespace $phpNamespace,
-        ClassType $classType
+        private PhpNamespace $phpNamespace,
+        private ClassType $classType
     ) {
-        $this->phpNamespace = $phpNamespace;
-        $this->classType = $classType;
     }
 
     public function getPhpNamespace(): PhpNamespace

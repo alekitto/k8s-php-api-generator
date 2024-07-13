@@ -15,27 +15,21 @@ namespace K8s\ApiGenerator\Parser\Metadata;
 
 use Swagger\Annotations\Parameter;
 
-class ParameterMetadata
+readonly class ParameterMetadata
 {
     private const TYPE_MAP = [
         'integer' => 'int',
         'boolean' => 'bool',
     ];
 
-    private OperationMetadata $operation;
-
-    private Parameter $parameter;
-
-    public function __construct(OperationMetadata $operation, Parameter $parameter)
+    public function __construct(private Parameter $parameter)
     {
-        $this->operation = $operation;
-        $this->parameter = $parameter;
     }
 
     public function isRequiredDefinition(): bool
     {
         return $this->parameter->in === 'body'
-            && (bool)$this->parameter->required;
+            && $this->parameter->required;
     }
 
     public function isQueryParam() : bool
@@ -53,6 +47,7 @@ class ParameterMetadata
         if (empty($this->parameter->schema)) {
             return '';
         }
+
         $toReplace = '#/definitions/';
 
         return str_replace($toReplace, '', $this->parameter->schema->ref);

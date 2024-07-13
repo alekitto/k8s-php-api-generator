@@ -19,7 +19,7 @@ use K8s\ApiGenerator\Parser\Metadata\OperationMetadata;
 use Nette\PhpGenerator\Method;
 use Nette\PhpGenerator\PhpNamespace;
 
-class OperationMethodBodyGenerator
+readonly class OperationMethodBodyGenerator
 {
     use CodeGeneratorTrait;
     use OperationCodeGeneratorTrait;
@@ -124,12 +124,16 @@ class OperationMethodBodyGenerator
     {
         if ($this->isPodExec($phpMethodName)) {
             return 'exec';
-        } elseif ($this->isPortForward($phpMethodName)) {
-            return 'portforward';
-        } elseif ($this->isProxy($phpMethodName)) {
-            return 'proxy';
-        } else {
-            return 'generic';
         }
+
+        if ($this->isPortForward($phpMethodName)) {
+            return 'portforward';
+        }
+
+        if ($this->isProxy($phpMethodName)) {
+            return 'proxy';
+        }
+
+        return 'generic';
     }
 }

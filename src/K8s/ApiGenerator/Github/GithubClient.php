@@ -39,7 +39,7 @@ class GithubClient
                 $this->makeApiUri("/repos/{$owner}/{$repo}/git/refs/tags"),
                 $this->makeHttpOptions()
             );
-            $tags = json_decode($response->getContent(), true);
+            $tags = json_decode($response->getContent(), true, 512, JSON_THROW_ON_ERROR);
         } catch (ClientException $e) {
             if ($e->getCode() !== 404) {
                 throw $e;
@@ -58,14 +58,14 @@ class GithubClient
     public function getBlob(string $owner, string $repo, GitTag $tag, string $path): GitBlob
     {
         $pathInfo = pathinfo($path);
-        $basePath = urlencode(ltrim($pathInfo['dirname'], '/'));
+        $basePath = urlencode(ltrim($pathInfo['dirname'] ?? '', '/'));
 
         $response = $this->httpClient->request(
             'GET',
             $this->makeApiUri("/repos/{$owner}/{$repo}/git/trees/{$tag->getCommonName()}:{$basePath}"),
             $this->makeHttpOptions()
         );
-        $tree = json_decode($response->getContent(), true);
+        $tree = json_decode($response->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
         $sha = null;
         foreach ($tree['tree'] as $branch) {
@@ -86,7 +86,8 @@ class GithubClient
             $this->makeApiUri("/repos/{$owner}/{$repo}/git/blobs/{$sha}"),
             $this->makeHttpOptions()
         );
-        $content = json_decode($response->getContent(), true);
+
+        $content = json_decode($response->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
         return new GitBlob($content);
     }

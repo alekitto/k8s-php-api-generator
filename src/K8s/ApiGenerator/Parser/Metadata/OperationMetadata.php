@@ -18,7 +18,7 @@ use Swagger\Annotations\Operation;
 use Swagger\Annotations\Parameter;
 use Swagger\Annotations\Path;
 
-class OperationMetadata
+readonly class OperationMetadata
 {
     private const DEPRECATION_MARKER = 'Deprecated: ';
 
@@ -28,23 +28,11 @@ class OperationMetadata
         'watchlist',
     ];
 
-    private Operation $operation;
-
-    private Path $path;
-
-    /**
-     * @var ResponseMetadata[]
-     */
-    private array $responses;
-
     /**
      * @param ResponseMetadata[] $responses
      */
-    public function __construct(Path $path, Operation $operation, array $responses)
+    public function __construct(private Path $path, private Operation $operation, private array $responses)
     {
-        $this->path = $path;
-        $this->operation = $operation;
-        $this->responses = $responses;
     }
 
     public function getMethod(): string
@@ -54,7 +42,7 @@ class OperationMetadata
 
     public function getDescription(): string
     {
-        return ucfirst((string)$this->operation->description);
+        return ucfirst($this->operation->description);
     }
 
     public function getUriPath(): string
@@ -169,19 +157,18 @@ class OperationMetadata
             '',
             $operation
         );
-        $group = $this->getKubernetesGroup() ? $this->getKubernetesGroup() : 'Core';
+        $group = $this->getKubernetesGroup() ?: 'Core';
         $operation = str_ireplace(
             $group . $this->getKubernetesVersion(),
             '',
             $operation
         );
-        $operation = str_ireplace(
+
+        return str_ireplace(
             array_keys(GoPackageNameFormatter::NAME_REPLACEMENTS),
             array_values(GoPackageNameFormatter::NAME_REPLACEMENTS),
             $operation
         );
-
-        return $operation;
     }
 
     public function getReturnedType(): ?string
@@ -200,7 +187,9 @@ class OperationMetadata
         foreach ($success as $response) {
             if ($response->getDefinition()) {
                 return 'model';
-            } elseif ($response->isStringResponse()) {
+            }
+
+            if ($response->isStringResponse()) {
                 return 'string';
             }
         }
@@ -215,7 +204,7 @@ class OperationMetadata
         }
         $result = array_filter(
             $this->getParameters(),
-            fn (ParameterMetadata $param) => in_array($param->getName(), ['watch', 'follow'], true)
+            static fn (ParameterMetadata $param) => in_array($param->getName(), ['watch', 'follow'], true)
         );
 
         return count($result) > 0;
@@ -247,11 +236,11 @@ class OperationMetadata
     {
         return array_merge(
             array_map(
-                fn (Parameter $parameter) => new ParameterMetadata($this, $parameter),
+                static fn (Parameter $parameter) => new ParameterMetadata($parameter),
                 $this->operation->parameters ?? []
             ),
             array_map(
-                fn (Parameter $parameter) => new ParameterMetadata($this, $parameter),
+                static fn (Parameter $parameter) => new ParameterMetadata($parameter),
                 $this->path->parameters ?? []
             )
         );
@@ -299,7 +288,7 @@ class OperationMetadata
     {
         return array_filter(
             $this->getParameters(),
-            fn (ParameterMetadata $param) => $param->isQueryParam()
+            static fn (ParameterMetadata $param) => $param->isQueryParam()
         );
     }
 
@@ -349,12 +338,12 @@ class OperationMetadata
 
     public function isProxyWithPath(): bool
     {
-        return substr($this->getPhpMethodName(), -strlen('ProxyWithPath')) == 'ProxyWithPath';
+        return str_ends_with($this->getPhpMethodName(), 'ProxyWithPath');
     }
 
     private function isProxy(): bool
     {
-        return substr($this->getPhpMethodName(), -strlen('Proxy')) === 'Proxy'
+        return str_ends_with($this->getPhpMethodName(), 'Proxy')
             || $this->isProxyWithPath();
     }
 }

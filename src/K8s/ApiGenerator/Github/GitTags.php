@@ -32,7 +32,9 @@ class GitTags
             /** @var GitTag $tag */
             if ($version === null && $tag->isStable()) {
                 return $tag;
-            } elseif ($version && $tag->startsWith($version) && $tag->isStable()) {
+            }
+
+            if ($version && $tag->startsWith($version) && $tag->isStable()) {
                 return $tag;
             }
         }
@@ -43,9 +45,12 @@ class GitTags
         ));
     }
 
+    /**
+     * @return GitTag[]
+     */
     public function getStableTags(?string $ge = null): array
     {
-        return array_filter($this->getAndSortTags(), function (GitTag $tag) use ($ge) {
+        return array_filter($this->getAndSortTags(), static function (GitTag $tag) use ($ge) {
             if ($ge === null) {
                 return $tag->isStable();
             }
@@ -59,11 +64,10 @@ class GitTags
         $gitTags = $this->gitTags;
 
         # We first sort all tags, starting with the latest release
-        usort($gitTags, function (GitTag $tag1, GitTag $tag2): int {
+        usort($gitTags, static function (GitTag $tag1, GitTag $tag2): int {
             return version_compare($tag1->getCommonName(), $tag2->getCommonName());
         });
-        $gitTags = array_reverse($gitTags);
 
-        return $gitTags;
+        return array_reverse($gitTags);
     }
 }

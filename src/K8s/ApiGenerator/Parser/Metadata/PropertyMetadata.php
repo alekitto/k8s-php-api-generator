@@ -16,32 +16,28 @@ namespace K8s\ApiGenerator\Parser\Metadata;
 use Swagger\Annotations\Property;
 use const Swagger\UNDEFINED;
 
-class PropertyMetadata
+readonly class PropertyMetadata
 {
-    private bool $isRequired;
-
-    private Property $property;
-
-    public function __construct(Property $property, bool $isRequired)
+    public function __construct(private Property $property, private bool $isRequired)
     {
-        $this->property = $property;
-        $this->isRequired = $isRequired;
     }
 
     public function getType(): ?string
     {
         if ($this->property->type === 'object' && isset($this->property->additionalProperties->type)) {
             return $this->property->additionalProperties->type;
-        } elseif (isset($this->property->items->type)) {
-            return $this->property->items->type;
-        } else {
-            return $this->property->type;
         }
+
+        if (isset($this->property->items->type)) {
+            return $this->property->items->type;
+        }
+
+        return $this->property->type;
     }
 
     public function getDescription(): string
     {
-        return (string)$this->property->description;
+        return $this->property->description;
     }
 
     public function getName(): string
@@ -57,7 +53,7 @@ class PropertyMetadata
 
     public function isReadyOnly(): bool
     {
-        $isReadOnly = (bool)$this->property->readOnly;
+        $isReadOnly = $this->property->readOnly;
         if ($isReadOnly) {
             return true;
         }
@@ -77,7 +73,9 @@ class PropertyMetadata
 
         if ($this->property->ref) {
             return str_replace($toReplace, '', $this->property->ref);
-        } elseif (!empty($this->property->items) && !empty($this->property->items->ref)) {
+        }
+
+        if (!empty($this->property->items) && !empty($this->property->items->ref)) {
             return str_replace($toReplace, '', $this->property->items->ref);
         }
 

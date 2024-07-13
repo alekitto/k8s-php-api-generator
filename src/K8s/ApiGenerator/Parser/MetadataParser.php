@@ -48,7 +48,7 @@ class MetadataParser
         }
 
         foreach ($openApi->paths as $path) {
-            $openApiObject = new OpenApiContext($path, $openApi, $metadata);
+            $openApiObject = new OpenApiContext($path, $openApi);
             foreach ($this->serviceGenerator->generate($openApiObject, $metadata) as $serviceOperationMetadata) {
                 $metadata->addOperation($serviceOperationMetadata);
             }

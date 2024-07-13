@@ -15,16 +15,10 @@ namespace K8s\ApiGenerator\Parser\Metadata;
 
 use Swagger\Annotations\Response;
 
-class ResponseMetadata
+readonly class ResponseMetadata
 {
-    private ?DefinitionMetadata $definition;
-
-    private Response $response;
-
-    public function __construct(Response $response, ?DefinitionMetadata $definition = null)
+    public function __construct(private Response $response, private DefinitionMetadata|null $definition = null)
     {
-        $this->response = $response;
-        $this->definition = $definition;
     }
 
     public function isSuccess(): bool
@@ -38,7 +32,7 @@ class ResponseMetadata
         return $this->response->schema->type === 'string';
     }
 
-    public function getDefinition(): ?DefinitionMetadata
+    public function getDefinition(): DefinitionMetadata|null
     {
         return $this->definition;
     }

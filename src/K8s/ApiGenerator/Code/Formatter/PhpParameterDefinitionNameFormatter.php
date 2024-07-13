@@ -15,7 +15,7 @@ namespace K8s\ApiGenerator\Code\Formatter;
 
 use K8s\ApiGenerator\Parser\Metadata\DefinitionMetadata;
 
-class PhpParameterDefinitionNameFormatter
+readonly class PhpParameterDefinitionNameFormatter
 {
     public function format(DefinitionMetadata $definition): string
     {

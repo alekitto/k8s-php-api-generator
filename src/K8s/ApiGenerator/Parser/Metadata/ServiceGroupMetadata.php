@@ -15,21 +15,12 @@ namespace K8s\ApiGenerator\Parser\Metadata;
 
 use K8s\ApiGenerator\Parser\Formatter\ServiceGroupName;
 
-class ServiceGroupMetadata
+readonly class ServiceGroupMetadata
 {
-    private ServiceGroupName $group;
-
-    /**
-     * @var OperationMetadata[]
-     */
-    private array $operations;
-
     public function __construct(
-        ServiceGroupName $group,
-        array $operations
+        private ServiceGroupName $group,
+        private array $operations,
     ) {
-        $this->group = $group;
-        $this->operations = $operations;
     }
 
     public function getFqcn(): string
@@ -79,9 +70,7 @@ class ServiceGroupMetadata
     {
         foreach ($this->operations as $operation) {
             if ($operation->getPhpMethodName() === 'read' && $operation->getReturnedDefinition()) {
-                $definition = $operation->getReturnedDefinition();
-
-                return $definition->getDescription();
+                return $operation->getReturnedDefinition()->getDescription();
             }
         }
 
@@ -104,7 +93,7 @@ class ServiceGroupMetadata
             if ($operation->getKubernetesAction() !== 'post') {
                 continue;
             }
-            if (substr($operation->getPhpMethodName(), 0, strlen('create')) === 'create') {
+            if (str_starts_with($operation->getPhpMethodName(), 'create')) {
                 return $operation;
             }
         }
@@ -118,7 +107,7 @@ class ServiceGroupMetadata
             if ($operation->getKubernetesAction() !== 'delete') {
                 continue;
             }
-            if (substr($operation->getPhpMethodName(), 0, strlen('delete')) === 'delete') {
+            if (str_starts_with($operation->getPhpMethodName(), 'delete')) {
                 return $operation;
             }
         }
@@ -134,7 +123,9 @@ class ServiceGroupMetadata
             }
             if ($namespaced && $operation->requiresNamespace()) {
                 return $operation;
-            } elseif (!$namespaced && !$operation->requiresNamespace()) {
+            }
+
+            if (!$namespaced && !$operation->requiresNamespace()) {
                 return $operation;
             }
         }
@@ -155,13 +146,13 @@ class ServiceGroupMetadata
             if ($operation->getKubernetesAction() !== 'list') {
                 continue;
             }
-            $operationIsNamespaced = strpos($operation->getUriPath(), "/{namespace}/") !== false;
+            $operationIsNamespaced = str_contains($operation->getUriPath(), "/{namespace}/");
             if ($operationIsNamespaced && $namespaced) {
                 return $operation;
-            } elseif (!$operationIsNamespaced && !$namespaced) {
+            }
+
+            if (!$operationIsNamespaced && !$namespaced) {
                 return $operation;
-            } else {
-                continue;
             }
         }
 
@@ -171,7 +162,7 @@ class ServiceGroupMetadata
     public function getReadOperation(): ?OperationMetadata
     {
         foreach ($this->operations as $operation) {
-            if (substr($operation->getUriPath(), -strlen('/status')) === '/status') {
+            if (str_ends_with($operation->getUriPath(), '/status')) {
                 continue;
             }
             if ($operation->getKubernetesAction() === 'get') {
@@ -185,7 +176,7 @@ class ServiceGroupMetadata
     public function getReadStatusOperation(): ?OperationMetadata
     {
         foreach ($this->operations as $operation) {
-            if (substr($operation->getUriPath(), -strlen('/status')) !== '/status') {
+            if (!str_ends_with($operation->getUriPath(), '/status')) {
                 continue;
             }
             if ($operation->getKubernetesAction() === 'get') {
@@ -199,7 +190,7 @@ class ServiceGroupMetadata
     public function getPatchOperation(): ?OperationMetadata
     {
         foreach ($this->operations as $operation) {
-            if (substr($operation->getUriPath(), -strlen('/status')) === '/status') {
+            if (str_ends_with($operation->getUriPath(), '/status')) {
                 continue;
             }
             if ($operation->getKubernetesAction() === 'patch') {
@@ -213,7 +204,7 @@ class ServiceGroupMetadata
     public function getPatchStatusOperation(): ?OperationMetadata
     {
         foreach ($this->operations as $operation) {
-            if (substr($operation->getUriPath(), -strlen('/status')) !== '/status') {
+            if (!str_ends_with($operation->getUriPath(), '/status')) {
                 continue;
             }
             if ($operation->getKubernetesAction() === 'patch') {
@@ -227,7 +218,7 @@ class ServiceGroupMetadata
     public function getPutOperation(): ?OperationMetadata
     {
         foreach ($this->operations as $operation) {
-            if (substr($operation->getUriPath(), -strlen('/status')) === '/status') {
+            if (str_ends_with($operation->getUriPath(), '/status')) {
                 continue;
             }
             if ($operation->getKubernetesAction() === 'put') {
@@ -241,7 +232,7 @@ class ServiceGroupMetadata
     public function getPutStatusOperation(): ?OperationMetadata
     {
         foreach ($this->operations as $operation) {
-            if (substr($operation->getUriPath(), -strlen('/status')) !== '/status') {
+            if (!str_ends_with($operation->getUriPath(), '/status')) {
                 continue;
             }
             if ($operation->getKubernetesAction() === 'put') {

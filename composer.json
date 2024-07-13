@@ -9,15 +9,20 @@
       "email": "Chad.Sikorra@gmail.com"
     }
   ],
+  "repositories": [{
+    "type": "github",
+    "url": "https://github.com/alekitto/k8s-php-core.git",
+    "only": [ "k8s/core" ]
+  }],
   "keywords": [
     "k8s",
     "kubernetes"
   ],
   "require": {
-    "php": ">=7.4",
+    "php": ">=8.2",
     "ext-json": "*",
     "friendsofphp/php-cs-fixer": "^3.0",
-    "k8s/core": "^1.0",
+    "k8s/core": "dev-master",
     "nette/php-generator": "3.5.2",
     "symfony/console": "^6.4 || ^7.0",
     "symfony/filesystem": "^6.4 || ^7.0",

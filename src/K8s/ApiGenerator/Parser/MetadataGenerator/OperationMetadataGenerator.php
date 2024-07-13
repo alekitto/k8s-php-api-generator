@@ -33,12 +33,9 @@ class OperationMetadataGenerator
         'options',
         'head',
     ];
-    
-    private ServiceGroupNameFormatter $groupNameFormatter;
 
     public function __construct()
     {
-        $this->groupNameFormatter = new ServiceGroupNameFormatter();
     }
 
     /**
@@ -89,8 +86,9 @@ class OperationMetadataGenerator
 
                 continue;
             }
+
             $def = $openApiContext->findRef($response->schema->ref);
-            $definition = $generatedApi->findDefinitionByGoPackageName((string)$def->definition);
+            $definition = $generatedApi->findDefinitionByGoPackageName($def->definition);
             if (!$definition) {
                 throw new \RuntimeException('No model found: '. $def->definition);
             }

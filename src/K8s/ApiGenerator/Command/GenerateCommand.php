@@ -38,36 +38,15 @@ class GenerateCommand extends Command
 
     private const SWAGGER_SPEC_PATH = '/api/openapi-spec/swagger.json';
 
-    private GithubClient $githubClient;
-
-    private Serializer $serializer;
-
-    private MetadataParser $metadataParser;
-
-    private CodeGenerator $codeGenerator;
-
-    private ConfigurationManager $configManager;
-
-    private CodeRemover $codeRemover;
-
-    private CodeCleaner $codeCleaner;
-
     public function __construct(
-        ?GithubClient $githubClient = null,
-        ?Serializer $serializer = null,
-        ?MetadataParser $metadataParser = null,
-        ?CodeGenerator $codeGenerator = null,
-        ?ConfigurationManager $configManager = null,
-        ?CodeRemover $codeRemover = null,
-        ?CodeCleaner $codeCleaner = null
+        private readonly GithubClient $githubClient = new GithubClient(),
+        private readonly Serializer $serializer = new Serializer(),
+        private readonly MetadataParser $metadataParser = new MetadataParser(),
+        private readonly CodeGenerator $codeGenerator = new CodeGenerator(),
+        private readonly ConfigurationManager $configManager = new ConfigurationManager(),
+        private readonly CodeRemover $codeRemover = new CodeRemover(),
+        private readonly CodeCleaner $codeCleaner = new CodeCleaner(),
     ) {
-        $this->githubClient = $githubClient ?? new GithubClient();
-        $this->serializer = $serializer ?? new Serializer();
-        $this->metadataParser = $metadataParser ?? new MetadataParser();
-        $this->codeGenerator = $codeGenerator ?? new CodeGenerator();
-        $this->configManager = $configManager ?? new ConfigurationManager();
-        $this->codeRemover = $codeRemover ?? new CodeRemover();
-        $this->codeCleaner = $codeCleaner ?? new CodeCleaner();
         parent::__construct('generate');
     }
 

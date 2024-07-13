@@ -26,12 +26,9 @@ class ApiVersionsCommand extends Command
 
     private const GITHUB_REPO = 'kubernetes';
 
-    private GithubClient $githubClient;
-
-    public function __construct(?GithubClient $githubClient = null)
+    public function __construct(private readonly GithubClient $githubClient = new GithubClient())
     {
         parent::__construct('api-versions');
-        $this->githubClient = $githubClient ?? new GithubClient();
     }
 
     protected function configure(): void
@@ -77,7 +74,6 @@ class ApiVersionsCommand extends Command
         $ghApiRepo = $input->getOption('gh-api-repo');
         $apiTags = $this->githubClient->getTags($ghApiOwner, $ghApiRepo);
 
-        /** @var GitTag $tag */
         $kTags = [];
         foreach ($kubernetesTags->getStableTags($minVersion) as $tag) {
             $major = explode('.', $tag->getCommonName())[1];
@@ -108,7 +104,7 @@ class ApiVersionsCommand extends Command
             }, $toReturn)
         ];
 
-        $json = json_encode($toReturn);
+        $json = json_encode($toReturn, JSON_THROW_ON_ERROR);
         $output->writeln($json);
 
         return self::SUCCESS;

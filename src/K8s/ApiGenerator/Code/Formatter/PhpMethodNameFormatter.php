@@ -16,7 +16,7 @@ namespace K8s\ApiGenerator\Code\Formatter;
 use K8s\ApiGenerator\Code\ModelProperty;
 use K8s\ApiGenerator\Parser\Metadata\ParameterMetadata;
 
-class PhpMethodNameFormatter
+readonly class PhpMethodNameFormatter
 {
     public function formatModelProperty(ModelProperty $property, string $mode): string
     {

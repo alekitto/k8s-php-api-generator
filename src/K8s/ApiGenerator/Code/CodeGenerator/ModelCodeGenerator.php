@@ -26,7 +26,7 @@ use K8s\ApiGenerator\Parser\Metadata\Metadata;
 use K8s\ApiGenerator\Parser\Metadata\DefinitionMetadata;
 use Nette\PhpGenerator\PhpNamespace;
 
-class ModelCodeGenerator
+readonly class ModelCodeGenerator
 {
     use CodeGeneratorTrait;
     use DocBlockFormatterTrait;

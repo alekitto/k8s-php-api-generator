@@ -20,7 +20,7 @@ use K8s\ApiGenerator\Parser\Metadata\Metadata;
 use K8s\ApiGenerator\Parser\Metadata\OperationMetadata;
 use Nette\PhpGenerator\ClassType;
 
-class ModelAnnotationGenerator
+readonly class ModelAnnotationGenerator
 {
     use CodeGeneratorTrait;
 
@@ -39,12 +39,8 @@ class ModelAnnotationGenerator
                 $model->getKubernetesGroup()
             );
         }
-        if ($model->getKubernetesVersion()) {
-            $annotationProps[] = sprintf(
-                'version="%s"',
-                $model->getKubernetesVersion()
-            );
-        }
+
+        $annotationProps[] = sprintf('version="%s"', $model->getKubernetesVersion());
         $class->addComment(sprintf(
             '@Kubernetes\Kind(%s)',
             implode(',', $annotationProps)

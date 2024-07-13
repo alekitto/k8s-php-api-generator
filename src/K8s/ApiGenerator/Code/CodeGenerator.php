@@ -19,26 +19,14 @@ use K8s\ApiGenerator\Code\CodeGenerator\ServiceFactoryCodeGenerator;
 use K8s\ApiGenerator\Code\Writer\PhpFileWriter;
 use K8s\ApiGenerator\Parser\Metadata\Metadata;
 
-class CodeGenerator
+readonly class CodeGenerator
 {
-    private ModelCodeGenerator $modelCodeGenerator;
-
-    private ServiceCodeGenerator $serviceCodeGenerator;
-
-    private ServiceFactoryCodeGenerator $serviceFactoryCodeGenerator;
-
-    private PhpFileWriter $phpFileWriter;
-
     public function __construct(
-        ?PhpFileWriter $phpFileWriter = null,
-        ?ServiceCodeGenerator $serviceCodeGenerator = null,
-        ?ModelCodeGenerator $modelCodeGenerator = null,
-        ?ServiceFactoryCodeGenerator $serviceFactoryCodeGenerator = null
+        private PhpFileWriter $phpFileWriter = new PhpFileWriter(),
+        private ServiceCodeGenerator $serviceCodeGenerator = new ServiceCodeGenerator(),
+        private ModelCodeGenerator $modelCodeGenerator = new ModelCodeGenerator(),
+        private ServiceFactoryCodeGenerator $serviceFactoryCodeGenerator = new ServiceFactoryCodeGenerator(),
     ) {
-        $this->phpFileWriter = $phpFileWriter ?? new PhpFileWriter();
-        $this->modelCodeGenerator = $modelCodeGenerator ?? new ModelCodeGenerator();
-        $this->serviceCodeGenerator = $serviceCodeGenerator ?? new ServiceCodeGenerator();
-        $this->serviceFactoryCodeGenerator = $serviceFactoryCodeGenerator ?? new ServiceFactoryCodeGenerator();
     }
 
     public function generateCode(Metadata $metadata, CodeOptions $options): void
@@ -52,6 +40,7 @@ class CodeGenerator
                 );
             }
         }
+
         foreach ($metadata->getServiceGroups() as $serviceGroup) {
             $codeFile = $this->serviceCodeGenerator->generate(
                 $serviceGroup,
@@ -63,6 +52,7 @@ class CodeGenerator
                 $options
             );
         }
+
         $codeFile = $this->serviceFactoryCodeGenerator->generate(
             $metadata,
             $options

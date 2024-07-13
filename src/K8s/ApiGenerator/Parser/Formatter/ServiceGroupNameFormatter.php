@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace K8s\ApiGenerator\Parser\Formatter;
 
-class ServiceGroupNameFormatter
+readonly class ServiceGroupNameFormatter
 {
     public function format(string $groupName, string $version, string $kind): ServiceGroupName
     {

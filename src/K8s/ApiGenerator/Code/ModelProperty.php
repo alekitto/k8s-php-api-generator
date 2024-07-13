@@ -13,11 +13,12 @@ declare(strict_types=1);
 
 namespace K8s\ApiGenerator\Code;
 
+use DateTimeInterface;
 use K8s\ApiGenerator\Code\CodeGenerator\CodeGeneratorTrait;
 use K8s\ApiGenerator\Parser\Metadata\DefinitionMetadata;
 use K8s\ApiGenerator\Parser\Metadata\PropertyMetadata;
 
-class ModelProperty
+readonly class ModelProperty
 {
     use CodeGeneratorTrait;
 
@@ -26,24 +27,12 @@ class ModelProperty
         'boolean' => 'bool',
     ];
 
-    private string $phpPropertyName;
-
-    private CodeOptions $options;
-
-    private PropertyMetadata $property;
-
-    private ?DefinitionMetadata $definition;
-
     public function __construct(
-        string $phpPropertyName,
-        PropertyMetadata $property,
-        CodeOptions $options,
-        ?DefinitionMetadata $definition = null
+        private string $phpPropertyName,
+        private PropertyMetadata $property,
+        private CodeOptions $options,
+        private DefinitionMetadata|null $definition = null
     ) {
-        $this->phpPropertyName = $phpPropertyName;
-        $this->options = $options;
-        $this->property = $property;
-        $this->definition = $definition;
     }
 
     public function isReadyOnly(): bool
@@ -103,7 +92,7 @@ class ModelProperty
 
     public function getPhpReturnType(): ?string
     {
-        $type = $this->property->getType() ?? null;
+        $type = $this->property->getType();
         if (isset(self::TYPE_MAP[$type])) {
             $type = self::TYPE_MAP[$type];
         }
@@ -116,10 +105,14 @@ class ModelProperty
 
         if ($this->isCollection()) {
             return 'iterable';
-        } elseif ($this->definition->isValidModel()) {
+        }
+
+        if ($this->definition->isValidModel()) {
             return $this->makeFinalNamespace($this->definition->getPhpFqcn(), $this->options);
-        } elseif ($this->definition->isDateTime()) {
-            return \DateTimeInterface::class;
+        }
+
+        if ($this->definition->isDateTime()) {
+            return DateTimeInterface::class;
         }
 
         return null;
@@ -140,21 +133,33 @@ class ModelProperty
 
         if ($this->definition->isValidModel()) {
             return 'model';
-        } elseif ($this->definition->isDateTime()) {
-            return 'DateTime';
-        } elseif ($this->definition->isIntOrString()) {
-            return 'int-or-string';
-        } elseif ($this->definition->isString()) {
-            return 'string';
-        } elseif ($this->definition->isJSONSchemaPropsOrBool()) {
-            return 'mixed';
-        } elseif ($this->definition->isJsonValue()) {
-            return 'mixed';
-        } elseif ($this->definition->isJSONSchemaPropsOrArray()) {
-            return 'array';
-        } else {
-            return 'object';
         }
+
+        if ($this->definition->isDateTime()) {
+            return 'DateTime';
+        }
+
+        if ($this->definition->isIntOrString()) {
+            return 'int-or-string';
+        }
+
+        if ($this->definition->isString()) {
+            return 'string';
+        }
+
+        if ($this->definition->isJSONSchemaPropsOrBool()) {
+            return 'mixed';
+        }
+
+        if ($this->definition->isJsonValue()) {
+            return 'mixed';
+        }
+
+        if ($this->definition->isJSONSchemaPropsOrArray()) {
+            return 'array';
+        }
+
+        return 'object';
     }
 
     public function getPhpDocType(): string
@@ -166,7 +171,7 @@ class ModelProperty
         if (!$this->definition) {
             $docType = $this->property->getType() ?? 'mixed';
             $docType = ($docType === 'number') ? 'mixed' : $docType;
-            $docType = isset(self::TYPE_MAP[$docType]) ? self::TYPE_MAP[$docType] : $docType;
+            $docType = self::TYPE_MAP[$docType] ?? $docType;
             $docType .= ($this->property->isArray() && $docType !== 'array') ? '[]' : '';
 
             return $docType;
@@ -197,10 +202,7 @@ class ModelProperty
         return $docType;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getDefaultConstructorValue()
+    public function getDefaultConstructorValue(): array|null
     {
         return $this->isCollection() ? [] : null;
     }
@@ -219,13 +221,17 @@ class ModelProperty
     {
         if ($this->isCollection()) {
             return 'collection';
-        } elseif ($this->isModel()) {
-            return 'model';
-        } elseif ($this->isDateTime()) {
-            return 'datetime';
-        } else {
-            return null;
         }
+
+        if ($this->isModel()) {
+            return 'model';
+        }
+
+        if ($this->isDateTime()) {
+            return 'datetime';
+        }
+
+        return null;
     }
 
     public function getDescription(): string

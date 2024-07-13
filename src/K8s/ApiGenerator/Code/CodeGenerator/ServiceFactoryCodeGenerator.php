@@ -20,7 +20,7 @@ use K8s\ApiGenerator\Parser\Metadata\ServiceGroupMetadata;
 use K8s\Core\Contract\ApiInterface;
 use Nette\PhpGenerator\PhpNamespace;
 
-class ServiceFactoryCodeGenerator
+readonly class ServiceFactoryCodeGenerator
 {
     use CodeGeneratorTrait;
 

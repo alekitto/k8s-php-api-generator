@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace K8s\ApiGenerator\Parser\Formatter;
 
-class GoPackageNameFormatter
+readonly class GoPackageNameFormatter
 {
     public const NAME_REPLACEMENTS = [
         'apiserver' => 'ApiServer',
@@ -39,14 +39,14 @@ class GoPackageNameFormatter
         'Namespace' => 'K8sNamespace',
     ];
 
-    private const NO_UC_FIRST_REGEX = '/^v[0-9]/';
+    private const NO_UC_FIRST_REGEX = '/^v\d/';
 
     public function format(string $goPackageName): GoPackageName
     {
         $originalPackageName = $goPackageName;
 
         foreach (self::BASE_REPLACEMENTS as $base => $replacement) {
-            if (substr($goPackageName, 0, strlen($base)) === $base) {
+            if (str_starts_with($goPackageName, $base)) {
                 $goPackageName = $replacement . substr($goPackageName, strlen($base));
                 break;
             }

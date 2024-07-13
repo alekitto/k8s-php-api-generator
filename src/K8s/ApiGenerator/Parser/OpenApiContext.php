@@ -18,22 +18,12 @@ use Swagger\Annotations\AbstractAnnotation;
 use Swagger\Annotations\Definition;
 use Swagger\Annotations\Swagger;
 
-class OpenApiContext
+readonly class OpenApiContext
 {
-    private AbstractAnnotation $subject;
-
-    private Swagger $openApi;
-
-    private Metadata $generatedApi;
-
     public function __construct(
-        AbstractAnnotation $subject,
-        Swagger $openApi,
-        Metadata $generatedApi
+        private AbstractAnnotation $subject,
+        private Swagger $openApi
     ) {
-        $this->subject = $subject;
-        $this->openApi = $openApi;
-        $this->generatedApi = $generatedApi;
     }
 
     public function getSubject(): AbstractAnnotation
@@ -41,7 +31,7 @@ class OpenApiContext
         return $this->subject;
     }
 
-    public function findRef(string $ref): ?Definition
+    public function findRef(string $ref): Definition|null
     {
         $ref = $this->openApi->ref($ref);
 

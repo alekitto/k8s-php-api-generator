@@ -15,7 +15,7 @@ namespace K8s\ApiGenerator\Code;
 
 use K8s\ApiGenerator\Parser\Metadata\OperationMetadata;
 
-class DocLinkGenerator
+readonly class DocLinkGenerator
 {
     private const MIN_VERSION = 'v1.15';
 
@@ -29,7 +29,7 @@ class DocLinkGenerator
 
     public function canGenerateLink(string $version): bool
     {
-        return (bool)version_compare($version, self::MIN_VERSION, 'ge');
+        return (bool) version_compare($version, self::MIN_VERSION, 'ge');
     }
 
     public function generateLink(string $version, OperationMetadata $operation): string
@@ -46,14 +46,14 @@ class DocLinkGenerator
         if ($operation->getKubernetesVersion()) {
             $actionKindVersionGroup[] = $operation->getKubernetesVersion();
         }
-        $actionKindVersionGroup[] = $operation->getKubernetesGroup() ? $operation->getKubernetesGroup() : 'core';
+        $actionKindVersionGroup[] = $operation->getKubernetesGroup() ?: 'core';
 
         return sprintf(
             self::LINK_FORMAT,
             implode('.', explode('.', $version, -1)),
             implode(
                 '-',
-                array_map(fn (string $piece) => str_replace(
+                array_map(static fn (string $piece) => str_replace(
                     '.',
                     '-',
                     strtolower($piece)

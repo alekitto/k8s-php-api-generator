@@ -22,7 +22,7 @@ use K8s\Core\Collection;
 use Nette\PhpGenerator\ClassType;
 use Nette\PhpGenerator\PhpNamespace;
 
-class ModelMethodGenerator
+readonly class ModelMethodGenerator
 {
     use DocBlockFormatterTrait;
 

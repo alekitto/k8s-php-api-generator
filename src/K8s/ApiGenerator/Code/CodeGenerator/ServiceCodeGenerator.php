@@ -24,21 +24,15 @@ use K8s\ApiGenerator\Parser\Metadata\ServiceGroupMetadata;
 use K8s\Core\Contract\ApiInterface;
 use Nette\PhpGenerator\PhpNamespace;
 
-class ServiceCodeGenerator
+readonly class ServiceCodeGenerator
 {
     use CodeGeneratorTrait;
     use DocBlockFormatterTrait;
 
-    private DocLinkGenerator $docLinkGenerator;
-
-    private PhpParameterDefinitionNameFormatter $parameterNameFormatter;
-
     private OperationMethodCodeGenerator $operationCodeGenerator;
 
-    public function __construct(?DocLinkGenerator $docLinkGenerator = null)
+    public function __construct()
     {
-        $this->docLinkGenerator = $docLinkGenerator ?? new DocLinkGenerator();
-        $this->parameterNameFormatter = new PhpParameterDefinitionNameFormatter();
         $this->operationCodeGenerator = new OperationMethodCodeGenerator();
     }
 

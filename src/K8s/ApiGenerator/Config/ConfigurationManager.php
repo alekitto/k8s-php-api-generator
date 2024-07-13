@@ -41,7 +41,7 @@ class ConfigurationManager
         $data = json_encode([
             Configuration::KEY_GENERATOR_VERSION => $configuration->getGeneratorVersion(),
             Configuration::KEY_API_VERSION => $configuration->getApiVersion(),
-        ]);
+        ], JSON_THROW_ON_ERROR);
 
         if (file_put_contents($this->getFilePath(), $data) === false) {
             throw new \RuntimeException(sprintf(
@@ -62,7 +62,7 @@ class ConfigurationManager
                 $file
             ));
         }
-        $config = json_decode($config, true);
+        $config = json_decode($config, true, 512, JSON_THROW_ON_ERROR);
         if ($config === false) {
             throw new \RuntimeException(sprintf(
                 'Unable to decode JSON config file: %s',

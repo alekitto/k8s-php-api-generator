@@ -13,13 +13,10 @@ declare(strict_types=1);
 
 namespace K8s\ApiGenerator\Github;
 
-class GitBlob
+readonly class GitBlob
 {
-    private array $blob;
-
-    public function __construct(array $blob)
+    public function __construct(private array $blob)
     {
-        $this->blob = $blob;
     }
 
     public function getContent(): string
